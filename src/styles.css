@@ -61,7 +61,7 @@ body {
   flex-direction: column;
   border: 1px solid var(--panel-border);
   border-radius: 0;
-  overflow: hidden;
+  overflow: visible;
   background: var(--panel);
   box-shadow: var(--shadow);
   backdrop-filter: blur(20px);
@@ -74,6 +74,7 @@ body {
   width: 100%;
   height: 100%;
   min-height: 0;
+  overflow: hidden;
   background:
     linear-gradient(160deg, rgba(255, 255, 255, 0.05), rgba(0, 0, 0, 0.08)),
     #0b1016;
@@ -86,6 +87,14 @@ body {
 .scrcpy-stage.video-ready .status {
   opacity: 0;
   pointer-events: none;
+}
+
+.scrcpy-panel:hover .drag-handle,
+.scrcpy-panel:focus-within .drag-handle,
+.scrcpy-panel:hover .resize-handle,
+.scrcpy-panel:focus-within .resize-handle {
+  opacity: 1;
+  transform: none;
 }
 
 .scrcpy-stage canvas,
@@ -109,15 +118,67 @@ body {
   color: var(--danger);
 }
 
+.drag-handle {
+  position: absolute;
+  left: 30px;
+  bottom: 0;
+  width: 24px;
+  height: 24px;
+  transform: none;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 140, 66, 0.32)),
+    rgba(24, 30, 38, 0.9);
+  box-shadow: 0 8px 20px rgba(18, 24, 30, 0.22);
+  cursor: grab;
+  opacity: 0.12;
+  z-index: 4;
+  transition:
+    opacity 160ms ease,
+    background 160ms ease;
+}
+
+.drag-handle:hover {
+  opacity: 1;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.16), rgba(255, 140, 66, 0.48)),
+    rgba(24, 30, 38, 0.96);
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+}
+
 .resize-handle {
   position: absolute;
   left: 0;
   bottom: 0;
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
+  transform: none;
   cursor: nesw-resize;
-  background: transparent;
-  z-index: 3;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 140, 66, 0.22)),
+    rgba(24, 30, 38, 0.82);
+  box-shadow: 0 8px 20px rgba(18, 24, 30, 0.18);
+  opacity: 0.12;
+  z-index: 5;
+  transition:
+    opacity 160ms ease,
+    background 160ms ease;
+}
+
+.resize-handle:hover {
+  opacity: 1;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.14), rgba(255, 140, 66, 0.4)),
+    rgba(24, 30, 38, 0.94);
+}
+
+.drag-handle,
+.resize-handle {
+  margin-bottom: -30px;
 }
 
 @media (max-width: 900px) {

@@ -60,6 +60,7 @@ app.innerHTML = `
         <div class="scrcpy-stage" id="scrcpy-stage">
           <div class="status" id="status">等待连接</div>
         </div>
+        <div class="drag-handle" id="drag-handle" aria-label="drag"></div>
         <div class="resize-handle" id="resize-handle" aria-label="resize"></div>
       </div>
     </section>
@@ -69,6 +70,7 @@ app.innerHTML = `
 const panel = document.querySelector("#scrcpy-panel");
 const stage = document.querySelector("#scrcpy-stage");
 const statusNode = document.querySelector("#status");
+const dragHandle = document.querySelector("#drag-handle");
 const resizeHandle = document.querySelector("#resize-handle");
 
 let adb;
@@ -141,13 +143,6 @@ function makeDraggable(target, handle) {
   let startTop = 0;
 
   handle.addEventListener("pointerdown", (event) => {
-    if (event.target instanceof Element) {
-      const interactive = event.target.closest("button, input, select, textarea, a");
-      if (interactive) {
-        return;
-      }
-    }
-
     if (event.button !== 0) {
       return;
     }
@@ -383,6 +378,8 @@ function bindPointerControls(controller) {
     return;
   }
 
+  let activePointerId = null;
+
   const sendTouch = (action, event) => {
     const coordinates = getStageCoordinates(event);
     void controller.injectTouch({
@@ -398,29 +395,52 @@ function bindPointerControls(controller) {
   };
 
   stage.onpointerdown = (event) => {
+    if (activePointerId !== null) {
+      return;
+    }
+
     event.preventDefault();
+    event.stopPropagation();
+    activePointerId = event.pointerId;
     stage.setPointerCapture(event.pointerId);
     sendTouch(AndroidMotionEventAction.Down, event);
   };
 
   stage.onpointermove = (event) => {
-    if (!stage.hasPointerCapture(event.pointerId)) {
+    if (activePointerId !== event.pointerId || !stage.hasPointerCapture(event.pointerId)) {
       return;
     }
+
     event.preventDefault();
+    event.stopPropagation();
     sendTouch(AndroidMotionEventAction.Move, event);
   };
 
   const release = (event) => {
+    if (activePointerId !== event.pointerId) {
+      return;
+    }
+
     if (stage.hasPointerCapture(event.pointerId)) {
       stage.releasePointerCapture(event.pointerId);
     }
+
     event.preventDefault();
+    event.stopPropagation();
     sendTouch(AndroidMotionEventAction.Up, event);
+    activePointerId = null;
   };
 
   stage.onpointerup = release;
   stage.onpointercancel = release;
+  stage.onlostpointercapture = (event) => {
+    if (activePointerId !== event.pointerId) {
+      return;
+    }
+
+    sendTouch(AndroidMotionEventAction.Up, event);
+    activePointerId = null;
+  };
 }
 
 async function connectScrcpy() {
@@ -530,7 +550,8 @@ async function disconnectScrcpy() {
   stage.onpointermove = null;
   stage.onpointerup = null;
   stage.onpointercancel = null;
+  stage.onlostpointercapture = null;
 }
-makeDraggable(panel, panel);
+makeDraggable(panel, dragHandle);
 makeResizable(panel, resizeHandle);
 void connectScrcpy();
