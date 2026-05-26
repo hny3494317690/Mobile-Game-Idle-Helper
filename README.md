@@ -34,6 +34,8 @@
 - `bridgeUrl`：前端连接的 WebSocket bridge 地址
 - `deviceSerial`：ADB 地址，例如 `your-adb-host:16384`
 - `scrcpyServerPath`：项目内本地 `jar` 文件相对路径
+- `authUsername`：网页登录用户名
+- `authPassword`：网页登录密码
 - `appPort`：前端页面端口，开发模式和正式静态服务共用
 - `bridgePort`：bridge 监听端口
 
@@ -129,6 +131,8 @@ Main fields:
 - `bridgeUrl`
 - `deviceSerial`
 - `scrcpyServerPath`: relative local jar path inside this project
+- `authUsername`: web login username
+- `authPassword`: web login password
 - `appPort`: frontend page port for both dev mode and production static server
 - `bridgePort`
 
@@ -224,6 +228,8 @@ Supported environment variables:
 - `bridgeUrl`
 - `deviceSerial`
 - `scrcpyServerPath`: 項目内 jar 相対経路
+- `authUsername`: 網頁登入用戶名
+- `authPassword`: 網頁登入密碼
 - `appPort`: 前端頁面端口。開発模式と本番静的服務で共用
 - `bridgePort`
 

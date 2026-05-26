@@ -2,6 +2,7 @@ import fs from "node:fs";
 import net from "node:net";
 import path from "node:path";
 import { WebSocketServer } from "ws";
+import { isAuthorized } from "./auth.js";
 
 const configPath = path.resolve(process.cwd(), "config/default.json");
 const fileConfig = fs.existsSync(configPath)
@@ -14,6 +15,11 @@ const DEFAULT_SERIAL = fileConfig.deviceSerial || "your-adb-host:16384";
 const server = new WebSocketServer({ port: PORT });
 
 server.on("connection", (socket, request) => {
+  if (!isAuthorized(request)) {
+    socket.close(1008, "unauthorized");
+    return;
+  }
+
   const requestUrl = new URL(request.url, `http://${request.headers.host}`);
   const serial = requestUrl.searchParams.get("serial") || DEFAULT_SERIAL;
   const [host, portText] = serial.split(":");

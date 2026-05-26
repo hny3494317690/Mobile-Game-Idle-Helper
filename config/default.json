@@ -3,6 +3,8 @@
   "bridgeUrl": "ws://127.0.0.1:22269",
   "deviceSerial": "127.0.0.1:16384",
   "scrcpyServerPath": "./resources/scrcpy-server.jar",
+  "authUsername": "admin",
+  "authPassword": "change-me",
   "appPort": 22268,
   "bridgePort": 22269
 }

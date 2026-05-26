@@ -49,29 +49,89 @@ const PAGE_URL = APP_CONFIG.pageUrl;
 const BRIDGE_URL = APP_CONFIG.bridgeUrl;
 const DEVICE_SERIAL = APP_CONFIG.deviceSerial;
 const DEVICE_SCRCPY_SERVER_PATH = "/data/local/tmp/scrcpy-server.jar";
+const requiresAuth = APP_CONFIG.authUsername && APP_CONFIG.authPassword;
 
 const app = document.querySelector("#app");
 
-app.innerHTML = `
-  <main class="workspace">
-    <iframe class="target-page" src="${PAGE_URL}" title="target page"></iframe>
-    <section class="overlay-shell">
-      <div class="scrcpy-panel" id="scrcpy-panel">
-        <div class="scrcpy-stage" id="scrcpy-stage">
-          <div class="status" id="status">等待连接</div>
+function renderLogin(message = "") {
+  app.innerHTML = `
+    <main class="login-screen">
+      <form class="login-card" id="login-form">
+        <h1>Mobile Game Idle Helper</h1>
+        <p>Please sign in to continue.</p>
+        <input id="login-username" name="username" placeholder="Username" autocomplete="username" />
+        <input id="login-password" name="password" type="password" placeholder="Password" autocomplete="current-password" />
+        <button type="submit">Sign In</button>
+        <div class="login-error" id="login-error">${message}</div>
+      </form>
+    </main>
+  `;
+
+  const form = document.querySelector("#login-form");
+  const errorNode = document.querySelector("#login-error");
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const username = document.querySelector("#login-username").value;
+    const password = document.querySelector("#login-password").value;
+
+    const response = await fetch("/auth/login", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ username, password }),
+    });
+
+    if (!response.ok) {
+      errorNode.textContent = "Invalid username or password.";
+      return;
+    }
+
+    window.location.reload();
+  });
+}
+
+function renderApp() {
+  app.innerHTML = `
+    <main class="workspace">
+      <iframe class="target-page" src="${PAGE_URL}" title="target page"></iframe>
+      <section class="overlay-shell">
+        <div class="scrcpy-panel" id="scrcpy-panel">
+          <div class="scrcpy-stage" id="scrcpy-stage">
+            <div class="status" id="status">等待连接</div>
+          </div>
+          <div class="drag-handle" id="drag-handle" aria-label="drag"></div>
+          <div class="resize-handle" id="resize-handle" aria-label="resize"></div>
         </div>
-        <div class="drag-handle" id="drag-handle" aria-label="drag"></div>
-        <div class="resize-handle" id="resize-handle" aria-label="resize"></div>
-      </div>
-    </section>
-  </main>
-`;
+      </section>
+    </main>
+  `;
+}
+
+if (requiresAuth) {
+  const authResponse = await fetch("/auth/status", { cache: "no-store" });
+  if (authResponse.ok) {
+    const authState = await authResponse.json();
+    if (!authState.authorized) {
+      renderLogin();
+    } else {
+      renderApp();
+    }
+  } else {
+    renderLogin();
+  }
+} else {
+  renderApp();
+}
 
 const panel = document.querySelector("#scrcpy-panel");
 const stage = document.querySelector("#scrcpy-stage");
 const statusNode = document.querySelector("#status");
 const dragHandle = document.querySelector("#drag-handle");
 const resizeHandle = document.querySelector("#resize-handle");
+
+if (!panel || !stage || !statusNode || !dragHandle || !resizeHandle) {
+  throw new Error("App UI not ready");
+}
 
 let adb;
 let transport;

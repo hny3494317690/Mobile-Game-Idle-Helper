@@ -25,6 +25,7 @@ try {
 APP_HOST="${APP_HOST:-0.0.0.0}"
 APP_PORT="${APP_PORT:-$(read_json_value appPort)}"
 BRIDGE_PORT="${BRIDGE_PORT:-$(read_json_value bridgePort)}"
+AUTH_SESSION_SECRET="${AUTH_SESSION_SECRET:-$(node -e 'console.log(require("crypto").randomBytes(32).toString("hex"))')}"
 
 APP_PORT="${APP_PORT:-5173}"
 BRIDGE_PORT="${BRIDGE_PORT:-27183}"
@@ -54,11 +55,11 @@ echo "Building frontend..."
 npm run build
 
 echo "Starting bridge on ${BRIDGE_PORT}..."
-BRIDGE_PORT="$BRIDGE_PORT" node server/bridge.js &
+AUTH_SESSION_SECRET="$AUTH_SESSION_SECRET" BRIDGE_PORT="$BRIDGE_PORT" node server/bridge.js &
 BRIDGE_PID=$!
 
 echo "Starting static server on ${APP_HOST}:${APP_PORT}..."
-HOST="$APP_HOST" PORT="$APP_PORT" node server/static.js &
+AUTH_SESSION_SECRET="$AUTH_SESSION_SECRET" HOST="$APP_HOST" PORT="$APP_PORT" node server/static.js &
 WEB_PID=$!
 
 echo "Mobile Game Idle Helper is running."
