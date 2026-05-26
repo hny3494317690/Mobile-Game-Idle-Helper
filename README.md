@@ -49,6 +49,12 @@ npm run prepare:scrcpy-server
 
 ## 启动
 
+```bash
+npm install
+chmod +x run.sh
+./run.sh
+```
+
 安装依赖：
 
 ```bash
@@ -77,15 +83,6 @@ npm run bridge
 npm run preview:prod
 ```
 
-## Linux 守护
-
-可以直接执行：
-
-```bash
-chmod +x run.sh
-./run.sh
-```
-
 可用环境变量：
 
 - `APP_HOST`：默认 `0.0.0.0`
@@ -96,6 +93,7 @@ chmod +x run.sh
 
 - 如果目标网页禁止 iframe 嵌入，页面内将无法显示。
 - 浏览器版 scrcpy 底层仍然基于 ADB 协议，但用户不需要手动运行 `adb`。
+- 如果浏览器环境不支持 `WebCodecs`，前端会自动回退到 `TinyH264` 软件解码。
 
 ---
 
@@ -146,6 +144,12 @@ npm run prepare:scrcpy-server
 
 ## Start
 
+```bash
+npm install
+chmod +x run.sh
+./run.sh
+```
+
 Install dependencies:
 
 ```bash
@@ -174,15 +178,6 @@ npm run bridge
 npm run preview:prod
 ```
 
-## Linux Daemon
-
-Run:
-
-```bash
-chmod +x run.sh
-./run.sh
-```
-
 Supported environment variables:
 
 - `APP_HOST`: defaults to `0.0.0.0`
@@ -193,6 +188,7 @@ Supported environment variables:
 
 - If the target page forbids iframe embedding, it cannot be displayed inside the page.
 - Browser-based scrcpy still uses the ADB protocol internally, but users do not need to run `adb` manually.
+- If `WebCodecs` is unavailable in the browser environment, the frontend automatically falls back to `TinyH264` software decoding.
 
 ---
 
@@ -243,6 +239,12 @@ npm run prepare:scrcpy-server
 
 ## 起動
 
+```bash
+npm install
+chmod +x run.sh
+./run.sh
+```
+
 依存関係を導入:
 
 ```bash
@@ -271,15 +273,6 @@ npm run bridge
 npm run preview:prod
 ```
 
-## Linux 常駐実行
-
-次のように実行できます。
-
-```bash
-chmod +x run.sh
-./run.sh
-```
-
 利用可能な環境変数:
 
 - `APP_HOST`: 既定値は `0.0.0.0`
@@ -290,3 +283,4 @@ chmod +x run.sh
 
 - 対象頁面が iframe 埋込を禁止している場合、頁面内表示はできません。
 - 閲覧器版 scrcpy も内部では ADB 協議を使いますが、利用者が `adb` を手動実行する必要はありません。
+- 閲覧器環境で `WebCodecs` を利用できない場合、前端は自動的に `TinyH264` 軟件解碼へ切り替わります。

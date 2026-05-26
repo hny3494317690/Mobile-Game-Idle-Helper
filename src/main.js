@@ -17,6 +17,7 @@ import {
   BitmapVideoFrameRenderer,
   WebCodecsVideoDecoder,
 } from "@yume-chan/scrcpy-decoder-webcodecs";
+import { TinyH264Decoder } from "@yume-chan/scrcpy-decoder-tinyh264";
 import { Consumable, StructDeserializeStream, pipeFrom } from "@yume-chan/stream-extra";
 import "./styles.css";
 
@@ -78,6 +79,7 @@ let stageCanvas;
 let renderer;
 let connectionAttempt = 0;
 let frameWatchTimer = 0;
+let decoderLabel = "";
 
 function setStatus(message, isError = false) {
   statusNode.textContent = message;
@@ -89,6 +91,25 @@ function stringifyError(error) {
     return error.message;
   }
   return String(error);
+}
+
+function canUseWebCodecs() {
+  return typeof VideoDecoder !== "undefined";
+}
+
+function createVideoDecoder(videoStream, canvas) {
+  if (canUseWebCodecs()) {
+    decoderLabel = "WebCodecs";
+    renderer = new BitmapVideoFrameRenderer(canvas);
+    return new WebCodecsVideoDecoder({
+      codec: videoStream.metadata.codec,
+      renderer,
+    });
+  }
+
+  decoderLabel = "TinyH264";
+  renderer = undefined;
+  return new TinyH264Decoder({ canvas });
 }
 
 async function withTimeout(label, promise, ms = 10000) {
@@ -463,14 +484,11 @@ async function connectScrcpy() {
     }
 
     const canvas = createCanvas();
-    renderer = new BitmapVideoFrameRenderer(canvas);
-    decoder = new WebCodecsVideoDecoder({
-      codec: videoStream.metadata.codec,
-      renderer,
-    });
+    decoder = createVideoDecoder(videoStream, canvas);
 
     bindPointerControls(scrcpyClient.controller);
     watchFirstFrame();
+    setStatus(`已连接，等待首帧...（${decoderLabel}）`);
     void videoStream.stream.pipeTo(decoder.writable).catch((error) => {
       setStatus(`视频流中断：${stringifyError(error)}`, true);
     });
