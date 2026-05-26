@@ -1,6 +1,5 @@
 window.APP_CONFIG = {
-  pageUrl: "http://your-alas-host:22267",
-  bridgeUrl: "ws://your-bridge-host:27183",
+  pageUrl: "http://127.0.0.1:22267",
+  bridgeUrl: "ws://127.0.0.1:27183",
   deviceSerial: "your-adb-host:16384",
-  scrcpyServerPath: "/data/local/tmp/scrcpy-server.jar",
 };

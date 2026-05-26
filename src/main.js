@@ -21,10 +21,9 @@ import { Consumable, StructDeserializeStream, pipeFrom } from "@yume-chan/stream
 import "./styles.css";
 
 const DEFAULT_CONFIG = {
-  pageUrl: "http://your-alas-host:22267",
-  bridgeUrl: "ws://your-bridge-host:27183",
+  pageUrl: "http://127.0.0.1:22267",
+  bridgeUrl: "ws://127.0.0.1:27183",
   deviceSerial: "your-adb-host:16384",
-  scrcpyServerPath: "/data/local/tmp/scrcpy-server.jar",
 };
 
 const APP_CONFIG = {
@@ -35,7 +34,7 @@ const APP_CONFIG = {
 const PAGE_URL = APP_CONFIG.pageUrl;
 const BRIDGE_URL = APP_CONFIG.bridgeUrl;
 const DEVICE_SERIAL = APP_CONFIG.deviceSerial;
-const SCRCPY_SERVER_PATH = APP_CONFIG.scrcpyServerPath;
+const DEVICE_SCRCPY_SERVER_PATH = "/data/local/tmp/scrcpy-server.jar";
 
 const app = document.querySelector("#app");
 
@@ -341,7 +340,7 @@ async function pushServer(adbInstance) {
   await AdbScrcpyClient.pushServer(
     adbInstance,
     Consumable.ReadableStream.from([serverBuffer]),
-    SCRCPY_SERVER_PATH,
+    DEVICE_SCRCPY_SERVER_PATH,
   );
 }
 
@@ -437,7 +436,7 @@ async function connectScrcpy() {
     setStatus("正在启动 scrcpy server...");
     scrcpyClient = await withTimeout(
       "scrcpy server 启动",
-      AdbScrcpyClient.start(adb, SCRCPY_SERVER_PATH, options),
+      AdbScrcpyClient.start(adb, DEVICE_SCRCPY_SERVER_PATH, options),
       10000,
     );
     if (attemptId !== connectionAttempt) {

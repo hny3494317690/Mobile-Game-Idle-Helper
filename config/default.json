@@ -1,8 +1,7 @@
 {
-  "pageUrl": "http://your-alas-host:22267",
-  "bridgeUrl": "ws://your-bridge-host:27183",
-  "deviceSerial": "your-adb-host:16384",
-  "localScrcpyServerJar": "./resources/scrcpy-server.jar",
-  "scrcpyServerPath": "/data/local/tmp/scrcpy-server.jar",
-  "bridgePort": 27183
+  "pageUrl": "http://127.0.0.1:22267",
+  "bridgeUrl": "ws://127.0.0.1:22269",
+  "deviceSerial": "127.0.0.1:16384",
+  "scrcpyServerPath": "./resources/scrcpy-server.jar",
+  "bridgePort": 22268
 }
