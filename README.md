@@ -4,16 +4,14 @@
 
 <img src="./resources/readme-preview.jpg" alt="手游挂机小助手预览" width="900" />
 
-闲着无聊拿 Codex 搓的小工具。它可以把挂机脚本和手机画面放进同一个网页里，方便把模拟器和挂机环境放到另一台机器上远程看和控。
+闲着无聊拿 Codex 搓的小工具。它可以把挂机脚本和手机画面放进同一个网页里
+
+是时候把脚本和模拟器放进同事的神秘win nas了，解放主力机内存资源
 
 ## 架构
 
-两部分：
-
 - `src/`：前端页面、悬浮手机画面、交互逻辑
 - `server/bridge.js`：把浏览器 WebSocket 转发到设备的 ADB TCP 端口
-
-bridge 不调用本机 `scrcpy`，只做网络转发。
 
 ## 目录
 
@@ -22,14 +20,13 @@ bridge 不调用本机 `scrcpy`，只做网络转发。
 - `scripts/`：调试探针脚本
 - `server/`：bridge 和生产静态服务
 - `src/`：前端源码
-- `run_alas_scrcpy.sh`：Linux 启动脚本
+- `run.sh`：Linux 启动脚本
 
 ## 配置
 
-先改这两个文件：
-
-- `resources/app-config.js`
 - `config/default.json`
+
+前端页面、bridge、开发端口和正式静态服务都读取这一份配置。
 
 配置项：
 
@@ -37,6 +34,7 @@ bridge 不调用本机 `scrcpy`，只做网络转发。
 - `bridgeUrl`：前端连接的 WebSocket bridge 地址
 - `deviceSerial`：ADB 地址，例如 `your-adb-host:16384`
 - `scrcpyServerPath`：项目内本地 `jar` 文件相对路径
+- `appPort`：前端页面端口，开发模式和正式静态服务共用
 - `bridgePort`：bridge 监听端口
 
 项目使用本地 scrcpy server 文件：
@@ -66,20 +64,33 @@ npm run dev
 
 前端默认监听 `0.0.0.0`。
 
+构建前端：
+
+```bash
+npm run build
+```
+
+运行正式环境：
+
+```bash
+npm run bridge
+npm run preview:prod
+```
+
 ## Linux 守护
 
 可以直接执行：
 
 ```bash
-chmod +x run_alas_scrcpy.sh
-./run_alas_scrcpy.sh
+chmod +x run.sh
+./run.sh
 ```
 
 可用环境变量：
 
-- `APP_HOST`
-- `APP_PORT`
-- `BRIDGE_PORT`
+- `APP_HOST`：默认 `0.0.0.0`
+- `APP_PORT`：默认读取 `config/default.json` 的 `appPort`
+- `BRIDGE_PORT`：默认读取 `config/default.json` 的 `bridgePort`
 
 ## 说明
 
@@ -96,12 +107,8 @@ This is a small tool built with Codex. It puts the idle script and the phone scr
 
 ## Architecture
 
-Two parts:
-
 - `src/`: frontend page, floating phone screen, interaction logic
 - `server/bridge.js`: forwards browser WebSocket traffic to the device's ADB TCP port
-
-The bridge does not call the native `scrcpy` executable. It only forwards traffic.
 
 ## Directory Layout
 
@@ -110,14 +117,13 @@ The bridge does not call the native `scrcpy` executable. It only forwards traffi
 - `scripts/`: debug probe scripts
 - `server/`: bridge and production static server
 - `src/`: frontend source code
-- `run_alas_scrcpy.sh`: Linux startup script
+- `run.sh`: Linux startup script
 
 ## Configuration
 
-Edit these files first:
-
-- `resources/app-config.js`
 - `config/default.json`
+
+The frontend page, bridge, dev port, and production static server all read from this single config file.
 
 Main fields:
 
@@ -125,6 +131,7 @@ Main fields:
 - `bridgeUrl`
 - `deviceSerial`
 - `scrcpyServerPath`: relative local jar path inside this project
+- `appPort`: frontend page port for both dev mode and production static server
 - `bridgePort`
 
 The project uses a local scrcpy server file:
@@ -154,20 +161,33 @@ npm run dev
 
 The frontend listens on `0.0.0.0` by default.
 
+Build the frontend:
+
+```bash
+npm run build
+```
+
+Run the production environment:
+
+```bash
+npm run bridge
+npm run preview:prod
+```
+
 ## Linux Daemon
 
 Run:
 
 ```bash
-chmod +x run_alas_scrcpy.sh
-./run_alas_scrcpy.sh
+chmod +x run.sh
+./run.sh
 ```
 
 Supported environment variables:
 
-- `APP_HOST`
-- `APP_PORT`
-- `BRIDGE_PORT`
+- `APP_HOST`: defaults to `0.0.0.0`
+- `APP_PORT`: defaults to `appPort` from `config/default.json`
+- `BRIDGE_PORT`: defaults to `bridgePort` from `config/default.json`
 
 ## Notes
 
@@ -184,12 +204,8 @@ Supported environment variables:
 
 ## 構成
 
-二つの部分があります。
-
 - `src/`: 前端画面、浮動手機画面、操作処理
 - `server/bridge.js`: 閲覧器の WebSocket を端末の ADB TCP 端口へ転送
-
-bridge は本機の `scrcpy` 実行文件を呼び出さず、通信転送だけを行います。
 
 ## 目録構成
 
@@ -198,14 +214,13 @@ bridge は本機の `scrcpy` 実行文件を呼び出さず、通信転送だけ
 - `scripts/`: 調試用探針脚本
 - `server/`: bridge と本番用静的服務
 - `src/`: 前端源碼
-- `run_alas_scrcpy.sh`: Linux 起動脚本
+- `run.sh`: Linux 起動脚本
 
 ## 設定
 
-最初に以下を編集します。
-
-- `resources/app-config.js`
 - `config/default.json`
+
+前端頁面、bridge、開発端口、本番静的服務はすべてこの一つの設定文件を読みます。
 
 主な設定項目:
 
@@ -213,6 +228,7 @@ bridge は本機の `scrcpy` 実行文件を呼び出さず、通信転送だけ
 - `bridgeUrl`
 - `deviceSerial`
 - `scrcpyServerPath`: 項目内 jar 相対経路
+- `appPort`: 前端頁面端口。開発模式と本番静的服務で共用
 - `bridgePort`
 
 この項目は本地の scrcpy server 文件を用います。
@@ -242,20 +258,33 @@ npm run dev
 
 前端は既定で `0.0.0.0` を監聴します。
 
+前端を構築:
+
+```bash
+npm run build
+```
+
+本番環境を実行:
+
+```bash
+npm run bridge
+npm run preview:prod
+```
+
 ## Linux 常駐実行
 
 次のように実行できます。
 
 ```bash
-chmod +x run_alas_scrcpy.sh
-./run_alas_scrcpy.sh
+chmod +x run.sh
+./run.sh
 ```
 
 利用可能な環境変数:
 
-- `APP_HOST`
-- `APP_PORT`
-- `BRIDGE_PORT`
+- `APP_HOST`: 既定値は `0.0.0.0`
+- `APP_PORT`: 既定では `config/default.json` の `appPort` を使用
+- `BRIDGE_PORT`: 既定では `config/default.json` の `bridgePort` を使用
 
 ## 注意
 

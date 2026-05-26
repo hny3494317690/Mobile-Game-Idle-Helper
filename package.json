@@ -5,11 +5,11 @@
   "type": "module",
   "scripts": {
     "prepare:scrcpy-server": "fetch-scrcpy-server 3.3.3 && mkdir -p resources && cp node_modules/@yume-chan/fetch-scrcpy-server/server.bin resources/scrcpy-server.jar",
-    "build": "vite build",
-    "dev": "vite --host 0.0.0.0",
+    "build": "vite build --config config/vite.config.js",
+    "dev": "vite --config config/vite.config.js",
     "bridge": "node server/bridge.js",
     "preview:prod": "node server/static.js",
-    "start": "vite"
+    "start": "vite --config config/vite.config.js"
   },
   "dependencies": {
     "@yume-chan/adb": "^2.6.0",

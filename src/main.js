@@ -22,14 +22,27 @@ import "./styles.css";
 
 const DEFAULT_CONFIG = {
   pageUrl: "http://127.0.0.1:22267",
-  bridgeUrl: "ws://127.0.0.1:27183",
-  deviceSerial: "your-adb-host:16384",
+  bridgeUrl: "ws://127.0.0.1:22269",
+  deviceSerial: "127.0.0.1:16384",
 };
 
-const APP_CONFIG = {
-  ...DEFAULT_CONFIG,
-  ...(window.APP_CONFIG || {}),
-};
+async function loadConfig() {
+  try {
+    const response = await fetch("/config/default.json", { cache: "no-store" });
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+    const fileConfig = await response.json();
+    return {
+      ...DEFAULT_CONFIG,
+      ...fileConfig,
+    };
+  } catch {
+    return DEFAULT_CONFIG;
+  }
+}
+
+const APP_CONFIG = await loadConfig();
 
 const PAGE_URL = APP_CONFIG.pageUrl;
 const BRIDGE_URL = APP_CONFIG.bridgeUrl;

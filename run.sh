@@ -4,7 +4,28 @@ set -eu
 SCRIPT_DIR="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
 cd "$SCRIPT_DIR"
 
+CONFIG_FILE="config/default.json"
+
+read_json_value() {
+  key="$1"
+  node -e '
+const fs = require("fs");
+const file = process.argv[1];
+const key = process.argv[2];
+try {
+  const data = JSON.parse(fs.readFileSync(file, "utf8"));
+  const value = data[key];
+  if (value !== undefined && value !== null) {
+    process.stdout.write(String(value));
+  }
+} catch {}
+' "$CONFIG_FILE" "$key"
+}
+
 APP_HOST="${APP_HOST:-0.0.0.0}"
+APP_PORT="${APP_PORT:-$(read_json_value appPort)}"
+BRIDGE_PORT="${BRIDGE_PORT:-$(read_json_value bridgePort)}"
+
 APP_PORT="${APP_PORT:-5173}"
 BRIDGE_PORT="${BRIDGE_PORT:-27183}"
 

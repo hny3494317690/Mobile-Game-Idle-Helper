@@ -7,8 +7,19 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.resolve(__dirname, "..");
 const distDir = path.join(rootDir, "dist");
 const resourcesDir = path.join(rootDir, "resources");
-const port = Number(process.env.PORT || 5173);
+const configPath = path.join(rootDir, "config", "default.json");
 const host = process.env.HOST || "0.0.0.0";
+
+function loadConfig() {
+  try {
+    return JSON.parse(fs.readFileSync(configPath, "utf8"));
+  } catch {
+    return {};
+  }
+}
+
+const config = loadConfig();
+const port = Number(process.env.PORT || config.appPort || 5173);
 
 const mimeTypes = {
   ".css": "text/css; charset=utf-8",
